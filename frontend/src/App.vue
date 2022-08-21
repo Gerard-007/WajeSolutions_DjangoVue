@@ -1,15 +1,51 @@
 <template>
   <div id="app">
-    <div class="container overflow-hidden text-center">
-      <div class="row gy-5">
-        <div class="col-4" v-for="book in books" :key="book.id">
-          <div class="card mb-3">
-            <img src="https://res.cloudinary.com/geetechlab-com/image/upload/v1567092352/geetech/project-1_j8gjpc.jpg" class="card-img-top" alt="{{book.id}}">
-            <div class="card-body">
-              <h5 class="card-title">{{book.name}}</h5>
-              <p class="card-text">ISBN: {{book.isbn}}</p>
-              <p class="card-text"><small class="text-muted">Author: {{book.book_author}}</small></p>
+    <div class="row justify-content-md-center">
+      <div class="col-6 mx-auto mt-5">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          add book
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form @submit.prevent="createBook">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput" placeholder="book-name" v-model="book.name">
+                    <label for="floatingInput">Name</label>
+                  </div>
+                  <div class="form-floating">
+                    <input  type="text" class="form-control" id="floatingISBN" placeholder="isbn" v-model="book.isbn">
+                    <label for="floatingISBN">ISBN</label>
+                  </div>
+                  <br/>
+                  <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary mb-3">Create Book</button>
+                  </div>
+                </form>
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <br/>
+    <div class="row gy-5">
+      <div class="col-3" v-for="book in books" :key="book.id">
+        <div class="card mb-3">
+          <img src="https://res.cloudinary.com/geetechlab-com/image/upload/v1567092352/geetech/project-1_j8gjpc.jpg" class="card-img-top" alt="{{book.id}}">
+          <div class="card-body">
+            <h5 class="card-title">{{book.name}}</h5>
+            <p class="card-text">ISBN: {{book.isbn}}</p>
+            <p class="card-text"><small class="text-muted">Author: {{book.book_author}}</small></p>
           </div>
         </div>
       </div>
@@ -23,12 +59,37 @@ export default {
   name: 'App',
   data(){
     return {
-      books: []
+      book: {
+        'name': '',
+        'isbn': '',
+        'author': ''
+      },
+      books: [],
+      authors: []
     }
   },
+
   async created() {
-    var response = await fetch('http://127.0.0.1:8000/');
-    this.books = await response.json();
+    await this.getBooks();
+  },
+
+  methods: {
+    async getBooks() {
+      var response = await fetch('http://127.0.0.1:8000/');
+      this.books = await response.json();
+    },
+
+    async createBook() {
+      await this.getBooks();
+      var response = await fetch('http://127.0.0.1:8000/', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.book)
+      });
+      this.books.push(await response.json());
+    }
   }
 }
 </script>
