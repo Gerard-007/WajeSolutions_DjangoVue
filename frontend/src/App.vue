@@ -27,7 +27,7 @@
                   </div>
                   <div class="form-floating mb-3">
                     <select class="form-select" id="floatingSelect" aria-label="Floating label select example" v-model="book.author">
-                      <option selected v-for="author in authors" :key="author.id">{{author.first_name}} {{author.last_name}}</option>
+                      <option selected v-for="author in authors" :key="author.id">{{author.id}} {{author.first_name}} {{author.last_name}}</option>
                     </select>
                     <label for="floatingSelect">Author</label>
                   </div>
